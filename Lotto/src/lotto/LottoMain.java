@@ -6,7 +6,7 @@ public class LottoMain {
 		BettingShop bettingShop = new BettingShop();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		LocalDate localDate = LocalDate.now();
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 4; i++) { //Many clients can be generated
 			Client client = new Client(i +"."+ dtf.format(localDate));
 			client.buy(bettingShop);
 		}

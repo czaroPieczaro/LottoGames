@@ -3,7 +3,11 @@ package lotto;
 import java.util.*;
 
 public class BettingShop {
-	private Map<String, Coupon> couponMap = new LinkedHashMap<String, Coupon>();
+	private Map<String, Coupon> couponMap = new LinkedHashMap<String, Coupon>();//Linked so it will appear in right order
+
+	public BettingShop() {
+
+	}
 
 	void printCouponMap() {
 		couponMap.forEach((k, v) -> printCoupon(v));
@@ -18,9 +22,5 @@ public class BettingShop {
 
 	public void addToCouponMap(String couponId, Coupon coupon) {
 		couponMap.put(couponId, coupon);
-	}
-
-	public BettingShop() {
-
 	}
 }
