@@ -8,6 +8,10 @@ public class BettingShop {
 	public BettingShop() {
 
 	}
+	Coupon printNewCoupon(String couponId){
+		Coupon coupon = new Coupon(couponId);
+		return coupon;
+	}
 
 	void printCouponMap() {
 		couponMap.forEach((k, v) -> printCoupon(v));
@@ -16,7 +20,7 @@ public class BettingShop {
 	void printCoupon(Coupon coupon) {
 		System.out.println("Client's id: " + coupon.getCouponId());
 		Map<String, int[]> bets = coupon.getBets();
-		bets.forEach((k, v) -> System.out.println(k + "  " + Arrays.toString(v))); // k.substring(2) - only game name
+		bets.forEach((k, v) -> System.out.println(k + " " + Arrays.toString(v))); // k.substring(2) - only game name
 		System.out.println();
 	}
 

@@ -1,6 +1,7 @@
 package lotto;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public class Result {
 	private String gameName;
@@ -28,6 +29,9 @@ public class Result {
 
 	public int[] getResults() {
 		return results;
+	}
+	public String getStringResults() {
+		return Arrays.toString(results);
 	}
 
 }

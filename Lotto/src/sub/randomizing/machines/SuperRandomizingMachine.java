@@ -33,7 +33,8 @@ public class SuperRandomizingMachine {
 	}
 public SuperRandomizingMachine(){
 	
-}
+	}
+
 	public static void printResult(Result resultInfo) {
 		System.out.println(resultInfo.getId() + System.lineSeparator() + "Winning numbers are:");
 		System.out.print(Arrays.toString(resultInfo.getResults()) + "\n" + "\n");
