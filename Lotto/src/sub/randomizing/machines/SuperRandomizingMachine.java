@@ -20,7 +20,7 @@ public class SuperRandomizingMachine {
 			boolean contains = true;
 
 			while (contains == true) {
-				int numberDrawn = ThreadLocalRandom.current().nextInt(minimum, maximum+1);
+				int numberDrawn = ThreadLocalRandom.current().nextInt(minimum, maximum + 1);
 				contains = IntStream.of(results).anyMatch(x -> x == numberDrawn);
 
 				if (contains == false) {
@@ -28,11 +28,13 @@ public class SuperRandomizingMachine {
 				}
 			}
 		}
+		Arrays.sort(results);
 		Result resultInfo = new Result(gameName, results);
 		return resultInfo;
 	}
-public SuperRandomizingMachine(){
-	
+
+	public SuperRandomizingMachine() {
+
 	}
 
 	public static void printResult(Result resultInfo) {
