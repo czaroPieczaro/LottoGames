@@ -37,21 +37,4 @@ public class SuperRandomizingMachine {
 
 	}
 
-	public static void printResult(Result resultInfo) {
-		System.out.println(resultInfo.getId() + System.lineSeparator() + "Winning numbers are:");
-		System.out.print(Arrays.toString(resultInfo.getResults()) + "\n" + "\n");
-	}
-
-	public int getMaximum() {
-		return maximum;
-	}
-
-	public int getResultsArrayLength() {
-		return numberOfDrawnNumbers;
-	}
-
-	public String getGameName() {
-		return gameName;
-	}
-
 }
