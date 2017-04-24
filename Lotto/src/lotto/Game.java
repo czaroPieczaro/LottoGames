@@ -8,17 +8,17 @@ public enum Game {
 	private final static int minimum = 1;
 	private final String gameName;
 	private final int maximum;
-	private final int numberOfDrawnNumbers;
+	private final int numberOfNumbersToChoose;
 	private final int winningTreshold;
 
 	private static final Game[] VALUES = values();
 	private static final int SIZE = VALUES.length;
 	private static final Random RANDOM = new Random();
 
-	Game(String gameName, int maximum, int numberOfDrawnNumbers, int winningTreshold) {
+	Game(String gameName, int maximum, int numberOfNumbersToChoose, int winningTreshold) {
 		this.gameName = gameName;
 		this.maximum = maximum;
-		this.numberOfDrawnNumbers = numberOfDrawnNumbers;
+		this.numberOfNumbersToChoose = numberOfNumbersToChoose;
 		this.winningTreshold = winningTreshold;
 	}
 
@@ -34,8 +34,8 @@ public enum Game {
 		return minimum;
 	}
 
-	public int numberOfDrawnNumbers() {
-		return numberOfDrawnNumbers;
+	public int numberOfNumbersToChoose() {
+		return numberOfNumbersToChoose;
 	}
 
 	public int winningTreshold() {

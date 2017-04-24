@@ -10,7 +10,7 @@ public class LottoMain {
 
 		BettingShop bettingShop = new BettingShop();
 		bettingShop.clearDatabase();
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 10; i++) {
 			Client client = new Client();
 			Coupon coupon = bettingShop.sellNewCoupon();
 			coupon = client.buy(coupon);
@@ -18,8 +18,8 @@ public class LottoMain {
 			bettingShop.addToCoupons(coupon); // bettingShop saves the coupon in it's coupons list
 			bettingShop.addToCouponDatabase(coupon); //with use of DAO
 		}
-		//bettingShop.printCoupons();
-		bettingShop.printCouponsDao(); //with use of DAO
+		bettingShop.printCoupons();
+		//bettingShop.printCouponsDao(); //with use of DAO
 		bettingShop.printStatistics(); //with use of DAO
 		BigLottoMachine bigLottoMachine = new BigLottoMachine();
 		SmallLottoMachine smallLottoMachine = new SmallLottoMachine();
@@ -30,16 +30,14 @@ public class LottoMain {
 		printResult(bigLottoResult);
 		printResult(smallLottoResult);
 		printResult(multiLottoResult);
-		Game big = Game.BIG;
-		Game small = Game.SMALL;
-		Game multi = Game.MULTI;
-		bettingShop.lookForWinner(bigLottoResult.getResults(), big);
-		bettingShop.lookForWinner(multiLottoResult.getResults(), multi);
-		bettingShop.lookForWinner(smallLottoResult.getResults(), small);
+		bettingShop.lookForWinnerBigLotto(bigLottoResult.getResults());
+		bettingShop.lookForWinnerSmallLotto(multiLottoResult.getResults());
+		bettingShop.lookForWinnerMultiLotto(smallLottoResult.getResults());
 	}
-	private static void printResult(Result result){
-		System.out.println(result.getGameName()+" result ID: " + result.getId());
-		System.out.println(result.getGameName()+" result date: " + result.getTimeOfDraw());
-		System.out.println(result.getGameName()+" result numbers: " + result.getStringResults());
+
+	private static void printResult(Result result) {
+		System.out.println(result.getGameName() + " result ID: " + result.getId());
+		System.out.println(result.getGameName() + " result date: " + result.getTimeOfDraw());
+		System.out.println(result.getGameName() + " result numbers: " + result.getStringResults());
 	}
 }

@@ -23,8 +23,14 @@ public class BettingShop {
 	public void clearDatabase() {
 		couponDaoImpl.clearDatabase();
 	}
-	public void lookForWinner(int[] result, Game game) throws FileNotFoundException, IOException{
-		couponDaoImpl.lookForWinner(result, game);
+	public void lookForWinnerBigLotto(int[] result) throws FileNotFoundException, IOException{
+		couponDaoImpl.lookForWinner(result, Game.BIG);
+	}
+	public void lookForWinnerSmallLotto(int[] result) throws FileNotFoundException, IOException{
+		couponDaoImpl.lookForWinner(result, Game.SMALL);
+	}
+	public void lookForWinnerMultiLotto(int[] result) throws FileNotFoundException, IOException{
+		couponDaoImpl.lookForWinner(result, Game.MULTI);
 	}
 	
 	public void printStatistics() throws FileNotFoundException, IOException {

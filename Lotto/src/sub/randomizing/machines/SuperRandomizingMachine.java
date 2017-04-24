@@ -18,11 +18,9 @@ public class SuperRandomizingMachine {
 
 		for (int i = 1; i <= numberOfDrawnNumbers; i++) {
 			boolean contains = true;
-
 			while (contains == true) {
 				int numberDrawn = ThreadLocalRandom.current().nextInt(minimum, maximum + 1);
 				contains = IntStream.of(results).anyMatch(x -> x == numberDrawn);
-
 				if (contains == false) {
 					results[i - 1] = numberDrawn;
 				}

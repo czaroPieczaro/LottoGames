@@ -27,6 +27,7 @@ public class CouponDaoImpl implements CouponDao {
 		return couponDaoImpl;
 	}
 
+	@Override
 	public void printCoupons() throws FileNotFoundException, IOException {
 		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
 				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
@@ -65,25 +66,6 @@ public class CouponDaoImpl implements CouponDao {
 	}
 
 	@Override
-	public void lookForWinner(int[] result, Game game) throws FileNotFoundException, IOException {
-		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
-				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
-		for (CSVRecord record : parser) {
-			if (record.get("Col2").equals(game.gameName())) {
-				String str = record.get("Col3");
-				int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
-						.mapToInt(Integer::parseInt).toArray();
-				if (findCommon(arr, result) >= game.winningTreshold()) {
-					System.out.println(Arrays.toString(arr));
-					System.out.println("Congratulations! You've guessed " + findCommon(arr, result)
-							+ " numbers correctly in " + game.gameName() + " on coupon " + record.get("Col4"));
-				}
-			}
-		}
-		parser.close();
-	}
-
-	@Override
 	public void printStatistics() throws FileNotFoundException, IOException {
 		int numberOfBigLottoBets = 0;
 		int numberOfSmallLottoBets = 0;
@@ -102,6 +84,25 @@ public class CouponDaoImpl implements CouponDao {
 		System.out.println("Number of Big Lotto games is: " + numberOfBigLottoBets);
 		System.out.println("Number of Small Lotto games is: " + numberOfSmallLottoBets);
 		System.out.println("Number of Multi Lotto games is: " + numberOfMultiLottoBets);
+		parser.close();
+	}
+
+	@Override
+	public void lookForWinner(int[] result, Game game) throws FileNotFoundException, IOException {
+		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
+		for (CSVRecord record : parser) {
+			if (record.get("Col2").equals(game.gameName())) {
+				String str = record.get("Col3");
+				int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
+						.mapToInt(Integer::parseInt).toArray();
+				if (findCommon(arr, result) >= game.winningTreshold()) {
+					System.out.println(Arrays.toString(arr));
+					System.out.println("Congratulations! You've guessed " + findCommon(arr, result)
+							+ " numbers correctly in " + game.gameName() + " on coupon " + record.get("Col4"));
+				}
+			}
+		}
 		parser.close();
 	}
 
