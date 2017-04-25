@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +31,10 @@ public class CouponDaoImpl implements CouponDao {
 	@Override
 	public void printCoupons() throws FileNotFoundException, IOException {
 		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
-				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
+				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
 		for (CSVRecord record : parser) {
-			System.out.println(record.get("Col1") + " " + record.get("Col2") + " " + record.get("Col3") + " "
-					+ record.get("Col4"));
+			System.out.println(record.get("Bet number") + " " + record.get("Game name") + " " + record.get("Numbers")
+					+ " " + record.get("Coupon id") + " " + record.get("Client id"));
 		}
 		parser.close();
 	}
@@ -41,7 +42,7 @@ public class CouponDaoImpl implements CouponDao {
 	@Override
 	public void clearDatabase() {
 		Path file = Paths.get(databasePath);
-		List<String> lines = Arrays.asList("bet number,game name, numbers, coupon id");
+		List<String> lines = Arrays.asList("Bet number, Game name, Numbers, Coupon id, Client id");
 		try {
 			Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
@@ -51,11 +52,11 @@ public class CouponDaoImpl implements CouponDao {
 	}
 
 	@Override
-	public void addToCouponDatabase(Coupon coupon) {
-		for (Map.Entry<String, int[]> entry : coupon.getBets().entrySet()) {
+	public void addCouponToDatabase(Coupon coupon, LocalDateTime clientId) {
+		for (Map.Entry<Integer, Bet> entry : coupon.getBets().entrySet()) {
 			Path file = Paths.get(databasePath);
-			List<String> lines = Arrays
-					.asList(entry.getKey() + "|" + Arrays.toString(entry.getValue()) + "|" + coupon.getCouponId());
+			List<String> lines = Arrays.asList(entry.getKey() + "|" + entry.getValue().getGame().gameName() + "|"
+					+ Arrays.toString(entry.getValue().getNumbers()) + "|" + coupon.getCouponId() + "|" + clientId);
 			try {
 				Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
 						StandardOpenOption.APPEND);
@@ -71,13 +72,13 @@ public class CouponDaoImpl implements CouponDao {
 		int numberOfSmallLottoBets = 0;
 		int numberOfMultiLottoBets = 0;
 		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
-				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
+				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
 		for (CSVRecord record : parser) {
-			if (record.get("Col2").equals("Big Lotto")) {
+			if (record.get("Game name").equals("Big Lotto")) {
 				numberOfBigLottoBets++;
-			} else if (record.get("Col2").equals("Small Lotto")) {
+			} else if (record.get("Game name").equals("Small Lotto")) {
 				numberOfSmallLottoBets++;
-			} else if (record.get("Col2").equals("Multi Lotto")) {
+			} else if (record.get("Game name").equals("Multi Lotto")) {
 				numberOfMultiLottoBets++;
 			}
 		}
@@ -90,16 +91,17 @@ public class CouponDaoImpl implements CouponDao {
 	@Override
 	public void lookForWinner(int[] result, Game game) throws FileNotFoundException, IOException {
 		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
-				.withHeader("Col1", "Col2", "Col3", "Col4").withDelimiter('|'));
+				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
 		for (CSVRecord record : parser) {
-			if (record.get("Col2").equals(game.gameName())) {
-				String str = record.get("Col3");
+			if (record.get("Game name").equals(game.gameName())) {
+				String str = record.get("Numbers");
 				int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
 						.mapToInt(Integer::parseInt).toArray();
 				if (findCommon(arr, result) >= game.winningTreshold()) {
-					System.out.println(Arrays.toString(arr));
-					System.out.println("Congratulations! You've guessed " + findCommon(arr, result)
-							+ " numbers correctly in " + game.gameName() + " on coupon " + record.get("Col4"));
+					System.out.println("Congratulations! Client " + record.get("Client id") + " You've guessed "
+							+ findCommon(arr, result) + " numbers correctly in " + game.gameName() + " on coupon "
+							+ record.get("Coupon id"));
+					System.out.println("Winning bet id: " + record.get("Bet number") + " " + Arrays.toString(arr));
 				}
 			}
 		}

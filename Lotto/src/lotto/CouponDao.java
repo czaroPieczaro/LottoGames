@@ -2,10 +2,11 @@ package lotto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public interface CouponDao {
 
-	void addToCouponDatabase(Coupon coupon);
+	void addCouponToDatabase(Coupon coupon, LocalDateTime clientId);
 
 	void printCoupons() throws FileNotFoundException, IOException;
 

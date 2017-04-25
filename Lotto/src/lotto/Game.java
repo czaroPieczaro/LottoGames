@@ -3,7 +3,7 @@ package lotto;
 import java.util.Random;
 
 public enum Game {
-	BIG("Big Lotto", 49, 6, 3), SMALL("Small Lotto", 35, 5, 5), MULTI("Multi Lotto", 80, 20, 20);
+	BIG("Big Lotto", 49, 6, 3), SMALL("Small Lotto", 35, 5, 5), MULTI("Multi Lotto", 80, 10, 10);
 
 	private final static int minimum = 1;
 	private final String gameName;
@@ -44,15 +44,5 @@ public enum Game {
 
 	public static Game randomGame() {
 		return VALUES[RANDOM.nextInt(SIZE)];
-	}
-
-	public static Game gameGeneratedWithName(String gameName) {
-		if (gameName.equals("Big Lotto")) {
-			return BIG;
-		} else if (gameName.equals("Small Lotto")) {
-			return SMALL;
-		} else {
-			return MULTI;
-		}
 	}
 }

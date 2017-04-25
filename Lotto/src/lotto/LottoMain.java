@@ -10,16 +10,16 @@ public class LottoMain {
 
 		BettingShop bettingShop = new BettingShop();
 		bettingShop.clearDatabase();
-		for (int i = 1; i <= 10; i++) {
+		for (int i = 1; i <= 5; i++) {
 			Client client = new Client();
 			Coupon coupon = bettingShop.sellNewCoupon();
 			coupon = client.buy(coupon);
 			client.crossBets(coupon);
 			bettingShop.addToCoupons(coupon); // bettingShop saves the coupon in it's coupons list
-			bettingShop.addToCouponDatabase(coupon); //with use of DAO
+			bettingShop.addCouponToDatabase(coupon, client.getClientId()); //with use of DAO
 		}
-		bettingShop.printCoupons();
-		//bettingShop.printCouponsDao(); //with use of DAO
+		//bettingShop.printCoupons();
+		bettingShop.printCouponsDao(); //with use of DAO
 		bettingShop.printStatistics(); //with use of DAO
 		BigLottoMachine bigLottoMachine = new BigLottoMachine();
 		SmallLottoMachine smallLottoMachine = new SmallLottoMachine();
@@ -31,8 +31,8 @@ public class LottoMain {
 		printResult(smallLottoResult);
 		printResult(multiLottoResult);
 		bettingShop.lookForWinnerBigLotto(bigLottoResult.getResults());
-		bettingShop.lookForWinnerSmallLotto(multiLottoResult.getResults());
-		bettingShop.lookForWinnerMultiLotto(smallLottoResult.getResults());
+		bettingShop.lookForWinnerSmallLotto(smallLottoResult.getResults());
+		bettingShop.lookForWinnerMultiLotto(multiLottoResult.getResults());
 	}
 
 	private static void printResult(Result result) {

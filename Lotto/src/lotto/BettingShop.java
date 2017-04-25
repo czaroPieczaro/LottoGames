@@ -2,6 +2,7 @@ package lotto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class BettingShop {
@@ -12,8 +13,8 @@ public class BettingShop {
 
 	}
 
-	public void addToCouponDatabase(Coupon coupon) {
-		couponDaoImpl.addToCouponDatabase(coupon);
+	public void addCouponToDatabase(Coupon coupon, LocalDateTime clientId) {
+		couponDaoImpl.addCouponToDatabase(coupon, clientId);
 	}
 
 	public void printCouponsDao() throws FileNotFoundException, IOException {
@@ -42,14 +43,14 @@ public class BettingShop {
 		return coupon;
 	}
 
-	public void printCoupons() {
+/*	public void printCoupons() {
 		for (Coupon coupon : coupons) {
 			System.out.println("Coupon's id: " + coupon.getCouponId());
 			Map<String, int[]> bets = coupon.getBets();
-			bets.forEach((k, v) -> System.out.println(k + " " + Arrays.toString(v))); // k.substring(2) - only game name
+			bets.forEach((k, v) -> System.out.println(k + " " + Arrays.toString(v)));
 			System.out.println();
 		}
-	}
+	}*/
 
 	public void addToCoupons(Coupon coupon) {
 		coupons.add(coupon);
