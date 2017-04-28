@@ -2,6 +2,7 @@ package lotto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import sub.randomizing.machines.*;
 
@@ -10,17 +11,45 @@ public class LottoMain {
 
 		BettingShop bettingShop = new BettingShop();
 		bettingShop.clearDatabase();
-		for (int i = 1; i <= 5; i++) {
+		bettingShop.clearStatisticsDatabase();
+		
+		//Variant 1: 1 coupon per client, exactly one game from each kind
+		
+		for (int i = 1; i <= 100000; i++) {
 			Client client = new Client();
 			Coupon coupon = bettingShop.sellNewCoupon();
-			coupon = client.buy(coupon);
+			coupon = client.buy(coupon, 3);
 			client.crossBets(coupon);
-			bettingShop.addToCoupons(coupon); // bettingShop saves the coupon in it's coupons list
-			bettingShop.addCouponToDatabase(coupon, client.getClientId()); //with use of DAO
+			bettingShop.addToCoupons(coupon,client.getClientId());
 		}
-		//bettingShop.printCoupons();
-		bettingShop.printCouponsDao(); //with use of DAO
-		bettingShop.printStatistics(); //with use of DAO
+
+		//Variant 2: 1 coupon per client, exactly one game from each kind + max 7 other
+
+		
+/*		 for (int i = 1; i <= 100000; i++) {
+		 Client client = new Client();
+		 Coupon coupon = bettingShop.sellNewCoupon();
+		 coupon = client.buy(coupon,10);
+		 client.crossBets(coupon);
+		 bettingShop.addToCoupons(coupon,client.getClientId());
+		 }*/
+		 
+		//Variant 3: max 3 coupons per client. On coupon exactly one game from each kind + max 7 other
+
+		
+/*		 for (int i = 1; i <= 100000; i++) {
+			 Client client = new Client();
+			 Coupon coupon;
+			 int numberOfCoupons = ThreadLocalRandom.current().nextInt(1, 4);
+			 for (int j = 1; j <= numberOfCoupons; j++) {
+			 coupon = bettingShop.sellNewCoupon();
+			 coupon = client.buy(coupon, 10);
+			 client.crossBets(coupon);
+			 bettingShop.addToCoupons(coupon,client.getClientId());
+			 }
+		 }*/
+		 
+		bettingShop.addCouponsToDatabase();
 		BigLottoMachine bigLottoMachine = new BigLottoMachine();
 		SmallLottoMachine smallLottoMachine = new SmallLottoMachine();
 		MultiLottoMachine multiLottoMachine = new MultiLottoMachine();
@@ -30,9 +59,10 @@ public class LottoMain {
 		printResult(bigLottoResult);
 		printResult(smallLottoResult);
 		printResult(multiLottoResult);
-		bettingShop.lookForWinnerBigLotto(bigLottoResult.getResults());
-		bettingShop.lookForWinnerSmallLotto(smallLottoResult.getResults());
-		bettingShop.lookForWinnerMultiLotto(multiLottoResult.getResults());
+		bettingShop.clearStatisticsDatabase();
+		bettingShop.getStatistics(bigLottoResult.getResults(),smallLottoResult.getResults(),multiLottoResult.getResults());
+		bettingShop.printStatistics();
+		bettingShop.printBigWinners();
 	}
 
 	private static void printResult(Result result) {

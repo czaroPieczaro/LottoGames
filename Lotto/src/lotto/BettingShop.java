@@ -6,15 +6,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class BettingShop {
-	private List<Coupon> coupons = new ArrayList<Coupon>();
+	private List<String> allBets = new ArrayList<String>();
 	private CouponDaoImpl couponDaoImpl = CouponDaoImpl.getInstance();
+	private StatisticsDaoImpl statisticsDaoImpl = StatisticsDaoImpl.getInstance();
 
 	public BettingShop() {
 
 	}
 
-	public void addCouponToDatabase(Coupon coupon, LocalDateTime clientId) {
-		couponDaoImpl.addCouponToDatabase(coupon, clientId);
+	public void addCouponsToDatabase() throws IOException {
+		couponDaoImpl.addCouponsToDatabase(allBets);
 	}
 
 	public void printCouponsDao() throws FileNotFoundException, IOException {
@@ -24,35 +25,38 @@ public class BettingShop {
 	public void clearDatabase() {
 		couponDaoImpl.clearDatabase();
 	}
-	public void lookForWinnerBigLotto(int[] result) throws FileNotFoundException, IOException{
-		couponDaoImpl.lookForWinner(result, Game.BIG);
+
+	public void clearStatisticsDatabase() {
+		statisticsDaoImpl.clearStatisticsDatabase();
 	}
-	public void lookForWinnerSmallLotto(int[] result) throws FileNotFoundException, IOException{
-		couponDaoImpl.lookForWinner(result, Game.SMALL);
+
+	public void getStatistics(int[] bigLottoResult, int[] smallLottoResult, int[] multiLottoResult)
+			throws FileNotFoundException, IOException {
+		statisticsDaoImpl.getStatistics(bigLottoResult, smallLottoResult, multiLottoResult);
 	}
-	public void lookForWinnerMultiLotto(int[] result) throws FileNotFoundException, IOException{
-		couponDaoImpl.lookForWinner(result, Game.MULTI);
-	}
-	
+
 	public void printStatistics() throws FileNotFoundException, IOException {
-		couponDaoImpl.printStatistics();
+		statisticsDaoImpl.printStatistics();
 	}
-	
+
+	public void printBigWinners() throws FileNotFoundException, IOException {
+		statisticsDaoImpl.printBigWinners();
+	}
+
 	Coupon sellNewCoupon() {
 		Coupon coupon = new Coupon();
 		return coupon;
 	}
 
-/*	public void printCoupons() {
-		for (Coupon coupon : coupons) {
-			System.out.println("Coupon's id: " + coupon.getCouponId());
-			Map<String, int[]> bets = coupon.getBets();
-			bets.forEach((k, v) -> System.out.println(k + " " + Arrays.toString(v)));
-			System.out.println();
+	public void addToCoupons(Coupon coupon, LocalDateTime clientId) {
+		Map<Integer, Bet> bets = coupon.getBets();
+		for (Map.Entry<Integer, Bet> entry : bets.entrySet()) {
+			int betNumber = entry.getKey();
+			String gameName = entry.getValue().getGame().gameName();
+			int[] numbers = entry.getValue().getNumbers();
+			LocalDateTime couponId = coupon.getCouponId();
+			allBets.add(betNumber + "|" + gameName + "|" + Arrays.toString(numbers) + "|" + couponId + "|" + clientId);
 		}
-	}*/
 
-	public void addToCoupons(Coupon coupon) {
-		coupons.add(coupon);
 	}
 }

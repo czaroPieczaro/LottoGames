@@ -2,17 +2,13 @@ package lotto;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CouponDao {
 
-	void addCouponToDatabase(Coupon coupon, LocalDateTime clientId);
+	void addCouponsToDatabase(List<String> bets) throws IOException;
 
 	void printCoupons() throws FileNotFoundException, IOException;
-
-	void lookForWinner(int[] result, Game game) throws FileNotFoundException, IOException;
-
-	void printStatistics() throws FileNotFoundException, IOException;
 
 	void clearDatabase();
 }

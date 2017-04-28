@@ -16,11 +16,20 @@ public class Client {
 
 	}
 
-	public Coupon buy(Coupon coupon) {
-		final int TOTAL_NUMBER_OF_BETS = ThreadLocalRandom.current().nextInt(1, 11);
-		for (int i = 1; i <= TOTAL_NUMBER_OF_BETS; i++) {
-			Bet bet = new Bet(); //Client chooses the game
-			coupon.addBetToCoupon(i, bet);
+	public Coupon buy(Coupon coupon, int maxNumberOfBets) {
+
+		Bet bet = new Bet(Game.BIG);
+		coupon.addBetToCoupon(1, bet);
+		bet = new Bet(Game.SMALL);
+		coupon.addBetToCoupon(2, bet);
+		bet = new Bet(Game.MULTI);
+		coupon.addBetToCoupon(3, bet);
+		if (maxNumberOfBets > 3) {
+			final int TOTAL_NUMBER_OF_BETS = ThreadLocalRandom.current().nextInt(4, maxNumberOfBets + 1);
+			for (int i = 4; i <= TOTAL_NUMBER_OF_BETS; i++) {
+				bet = new Bet();
+				coupon.addBetToCoupon(i, bet);
+			}
 		}
 		return coupon;
 	}
@@ -33,7 +42,7 @@ public class Client {
 			for (int i = 0; i < numbers.length; i++) {
 				boolean contains = true;
 				while (contains == true) {
-					int numberDrawn = ThreadLocalRandom.current().nextInt(game.minimum(), game.maximum());
+					int numberDrawn = ThreadLocalRandom.current().nextInt(game.minimum(), game.maximum() + 1);
 					contains = IntStream.of(numbers).anyMatch(x -> x == numberDrawn);
 					if (contains == false) {
 						numbers[i] = numberDrawn;

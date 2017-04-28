@@ -9,7 +9,7 @@ public class Coupon {
 	private final LocalDateTime COUPON_ID = LocalDateTime.now();
 
 	public Coupon() {
-		
+
 	}
 
 	public void addBetToCoupon(int betId, Bet bet) {
