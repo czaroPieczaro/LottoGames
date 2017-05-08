@@ -7,9 +7,10 @@ public class Coupon {
 
 	private Map<Integer, Bet> bets = new LinkedHashMap<Integer, Bet>();
 	private final LocalDateTime COUPON_ID = LocalDateTime.now();
+	private final int clientId;
 
-	public Coupon() {
-
+	public Coupon(int clientId) {
+		this.clientId = clientId;
 	}
 
 	public void addBetToCoupon(int betId, Bet bet) {
@@ -18,6 +19,10 @@ public class Coupon {
 
 	public LocalDateTime getCouponId() {
 		return COUPON_ID;
+	}
+
+	public int getClientId() {
+		return clientId;
 	}
 
 	public Map<Integer, Bet> getBets() {

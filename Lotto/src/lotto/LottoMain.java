@@ -8,47 +8,48 @@ import sub.randomizing.machines.*;
 
 public class LottoMain {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-
+		long startTime = System.nanoTime();
 		BettingShop bettingShop = new BettingShop();
 		bettingShop.clearDatabase();
 		bettingShop.clearStatisticsDatabase();
-		
-		//Variant 1: 1 coupon per client, exactly one game from each kind
-		
+		int maximumNumberOfBetsOnCoupon;
+
+/*		//Variant 1: 1 coupon per client, exactly one game from each kind
+
 		for (int i = 1; i <= 100000; i++) {
-			Client client = new Client();
-			Coupon coupon = bettingShop.sellNewCoupon();
-			coupon = client.buy(coupon, 3);
+			maximumNumberOfBetsOnCoupon = 3;
+			Client client = new Client(i);
+			Coupon coupon = bettingShop.sellNewCoupon(i);
+			coupon = client.buy(coupon, maximumNumberOfBetsOnCoupon);
 			client.crossBets(coupon);
-			bettingShop.addToCoupons(coupon,client.getClientId());
-		}
+			bettingShop.addToCoupons(coupon);
+		}*/
 
 		//Variant 2: 1 coupon per client, exactly one game from each kind + max 7 other
 
-		
-/*		 for (int i = 1; i <= 100000; i++) {
-		 Client client = new Client();
-		 Coupon coupon = bettingShop.sellNewCoupon();
-		 coupon = client.buy(coupon,10);
-		 client.crossBets(coupon);
-		 bettingShop.addToCoupons(coupon,client.getClientId());
-		 }*/
-		 
+/*		for (int i = 1; i <= 100000; i++) {
+			maximumNumberOfBetsOnCoupon = 10;
+			Client client = new Client(i);
+			Coupon coupon = bettingShop.sellNewCoupon(i);
+			coupon = client.buy(coupon, maximumNumberOfBetsOnCoupon);
+			client.crossBets(coupon);
+			bettingShop.addToCoupons(coupon);
+		}*/
+
 		//Variant 3: max 3 coupons per client. On coupon exactly one game from each kind + max 7 other
 
-		
-/*		 for (int i = 1; i <= 100000; i++) {
-			 Client client = new Client();
-			 Coupon coupon;
-			 int numberOfCoupons = ThreadLocalRandom.current().nextInt(1, 4);
-			 for (int j = 1; j <= numberOfCoupons; j++) {
-			 coupon = bettingShop.sellNewCoupon();
-			 coupon = client.buy(coupon, 10);
-			 client.crossBets(coupon);
-			 bettingShop.addToCoupons(coupon,client.getClientId());
-			 }
-		 }*/
-		 
+		for (int i = 1; i <= 100000; i++) {
+			maximumNumberOfBetsOnCoupon = 10;
+			Client client = new Client(i);
+			Coupon coupon;
+			int numberOfCoupons = ThreadLocalRandom.current().nextInt(1, 4);
+			for (int j = 1; j <= numberOfCoupons; j++) {
+				coupon = bettingShop.sellNewCoupon(client.getClientId());
+				coupon = client.buy(coupon, maximumNumberOfBetsOnCoupon);
+				client.crossBets(coupon);
+				bettingShop.addToCoupons(coupon);
+			}
+		}
 		bettingShop.addCouponsToDatabase();
 		BigLottoMachine bigLottoMachine = new BigLottoMachine();
 		SmallLottoMachine smallLottoMachine = new SmallLottoMachine();
@@ -59,10 +60,15 @@ public class LottoMain {
 		printResult(bigLottoResult);
 		printResult(smallLottoResult);
 		printResult(multiLottoResult);
-		bettingShop.clearStatisticsDatabase();
-		bettingShop.getStatistics(bigLottoResult.getResults(),smallLottoResult.getResults(),multiLottoResult.getResults());
+		bettingShop.writeToStatistics(bigLottoResult.getResults());
+		bettingShop.writeToStatistics(smallLottoResult.getResults());
+		bettingShop.writeToStatistics(multiLottoResult.getResults());
+		bettingShop.addStatistics();
 		bettingShop.printStatistics();
 		bettingShop.printBigWinners();
+
+		long endTime = System.nanoTime();
+		System.out.println("Time: " + (endTime - startTime) * Math.pow(10, -9) + " seconds");
 	}
 
 	private static void printResult(Result result) {

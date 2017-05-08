@@ -6,4 +6,7 @@ public class BigLottoMachine extends SuperRandomizingMachine {
 		this.maximum = 49;
 		this.numberOfDrawnNumbers = 6;
 	}
+	public void test(){
+		System.out.println("BIG");
+	}
 }

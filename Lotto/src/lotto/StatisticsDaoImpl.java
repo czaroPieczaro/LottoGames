@@ -1,7 +1,6 @@
 package lotto;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,10 +18,9 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 public class StatisticsDaoImpl {
+	Path couponDatabase = Paths.get("C:/Output/databaseVariant1.csv");
+	Path statisticDatabase = Paths.get("C:/Output/statisticsVariant1.csv");
 	private static StatisticsDaoImpl statisticsDaoImpl = new StatisticsDaoImpl();
-	private final String databasePath = "C:/Output/databaseVariant1.csv";
-	private final String statisticsPath = "C:/Output/statisticsVariant1.csv";
-	File fileStatistics = new File("C:/Output/statisticsVariant1.csv");
 	List<String> stats = new ArrayList<String>();
 
 	private StatisticsDaoImpl() {
@@ -33,10 +31,9 @@ public class StatisticsDaoImpl {
 	}
 
 	public void clearStatisticsDatabase() {
-		Path fileStatistics = Paths.get(statisticsPath);
-		List<String> lines = Arrays.asList("Game name, Common part size, Common part, Client id");
+		List<String> lines = Arrays.asList("Game name, Common part size, Common part, Bet number, Coupon Id, Client id");
 		try {
-			Files.write(fileStatistics, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
+			Files.write(statisticDatabase, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,8 +41,8 @@ public class StatisticsDaoImpl {
 	}
 
 	public void printStatistics() throws FileNotFoundException, IOException {
-		CSVParser parser = new CSVParser(new FileReader(statisticsPath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
-				.withHeader("Game name", "Common part size", "Numbers/number of occurances").withDelimiter('|'));//, "Client id"
+		CSVParser parser = new CSVParser(new FileReader(statisticDatabase.toString()), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+				.withHeader("Game name", "Common part size", "Numbers/number of occurances").withDelimiter('|'));
 		for (CSVRecord record : parser) {
 			System.out.println(record.get("Game name") + " " + record.get("Common part size") + " "
 					+ record.get("Numbers/number of occurances"));
@@ -54,10 +51,10 @@ public class StatisticsDaoImpl {
 	}
 
 	public void printBigWinners() throws FileNotFoundException, IOException {
-		CSVParser parser = new CSVParser(new FileReader(statisticsPath),
+		CSVParser parser = new CSVParser(new FileReader(statisticDatabase.toString()),
 				CSVFormat.DEFAULT.withSkipHeaderRecord(true)
 						.withHeader("Game name", "Common part size", "Numbers", "Bet number", "Coupon id", "Client id")
-						.withDelimiter('|'));//, "Client id"
+						.withDelimiter('|'));
 		for (CSVRecord record : parser) {
 			if (record.get("Game name").contains(" Big Win")) {
 				System.out.println(record.get("Game name") + " " + record.get("Common part size") + " "
@@ -68,54 +65,63 @@ public class StatisticsDaoImpl {
 		parser.close();
 	}
 
-	public void getStatistics(int[] bigLottoResult, int[] smallLottoResult, int[] multiLottoResult)
-			throws FileNotFoundException, IOException {
-		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+	public void writeToStatisticsBigLotto(int[] bigLottoResult) throws FileNotFoundException, IOException {
+		CSVParser parser = new CSVParser(new FileReader(couponDatabase.toString()), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
 				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
 		int bigCounter3 = 0;
 		int bigCounter4 = 0;
 		int bigCounter5 = 0;
 		int bigCounter6 = 0;
-		int smallCounter5 = 0;
-		int multiCounter10 = 0;
 		int bigCounter = 0;
-		int smallCounter = 0;
-		int multiCounter = 0;
 		for (CSVRecord record : parser) {
 			int numberOfCommonElements;
 			String str = record.get("Numbers");
 			int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
 					.mapToInt(Integer::parseInt).toArray();
-
 			if (record.get("Game name").equals(Game.BIG.gameName())) {
 				bigCounter++;
 				List<Integer> commonPart = findCommon(arr, bigLottoResult);
 				numberOfCommonElements = commonPart.size();
-				if (numberOfCommonElements >= Game.BIG.winningTreshold()) {
+				if(numberOfCommonElements == Game.BIG.numberOfNumbersToChoose()){
+					stats.add(Game.BIG.gameName() + " Big Win" + "|" + numberOfCommonElements + "|" + commonPart + "|"
+							+ record.get("Bet number") + "|" + record.get("Coupon id") + "|"
+							+ record.get("Client id"));
+				}
+				else if (numberOfCommonElements >= Game.BIG.winningTreshold()) {
+					stats.add(Game.BIG.gameName() + "|" + numberOfCommonElements + "|" + commonPart + "|"
+							+ record.get("Bet number") + "|" + record.get("Coupon id") + "|"
+							+ record.get("Client id"));
 					if (numberOfCommonElements == 3) {
 						bigCounter3++;
-						stats.add(Game.BIG.gameName() + "|" + numberOfCommonElements + "|" + commonPart + "|"
-								+ record.get("Bet number") + "|" + record.get("Coupon id") + "|"
-								+ record.get("Client id"));
 					} else if (numberOfCommonElements == 4) {
 						bigCounter4++;
-						stats.add(Game.BIG.gameName() + "|" + numberOfCommonElements + "|" + commonPart + "|"
-								+ record.get("Bet number") + "|" + record.get("Coupon id") + "|"
-								+ record.get("Client id"));
 					} else if (numberOfCommonElements == 5) {
 						bigCounter5++;
-						stats.add(Game.BIG.gameName() + "|" + numberOfCommonElements + "|" + commonPart + "|"
-								+ record.get("Bet number") + "|" + record.get("Coupon id") + "|"
-								+ record.get("Client id"));
 					} else if (numberOfCommonElements == 6) {
 						bigCounter6++;
-						stats.add(Game.BIG.gameName() + " Big Win" + "|" + numberOfCommonElements + "|" + commonPart
-								+ record.get("Bet number") + "|" + record.get("Coupon id") + "|" + "|"
-								+ record.get("Client id"));
 					}
-
 				}
-			} else if (record.get("Game name").equals(Game.SMALL.gameName())) {
+			}
+		}
+		parser.close();
+		stats.add("BL" + "Total" + "|" + bigCounter + "|" + "|" + "|");
+		stats.add("BL" + "|" + 3 + "|" + bigCounter3 + "|" + "|" + "|");
+		stats.add("BL" + "|" + 4 + "|" + bigCounter4 + "|" + "|" + "|");
+		stats.add("BL" + "|" + 5 + "|" + bigCounter5 + "|" + "|" + "|");
+		stats.add("BL" + "|" + 6 + "|" + bigCounter6 + "|" + "|" + "|");
+	}
+
+	public void writeToStatisticsSmallLotto(int[] smallLottoResult) throws FileNotFoundException, IOException {
+		CSVParser parser = new CSVParser(new FileReader(couponDatabase.toString()), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
+		int smallCounter5 = 0;
+		int smallCounter = 0;
+		for (CSVRecord record : parser) {
+			int numberOfCommonElements;
+			String str = record.get("Numbers");
+			int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
+					.mapToInt(Integer::parseInt).toArray();
+			if (record.get("Game name").equals(Game.SMALL.gameName())) {
 				smallCounter++;
 				List<Integer> commonPart = findCommon(arr, smallLottoResult);
 				numberOfCommonElements = commonPart.size();
@@ -124,7 +130,24 @@ public class StatisticsDaoImpl {
 					stats.add(Game.SMALL.gameName() + " Big Win" + "|" + numberOfCommonElements + "|" + commonPart + "|"
 							+ record.get("Bet number") + "|" + record.get("Coupon id") + "|" + record.get("Client id"));
 				}
-			} else if (record.get("Game name").equals(Game.MULTI.gameName())) {
+			}
+		}
+		parser.close();
+		stats.add("SL" + "Total" + "|" + smallCounter + "|" + "|" + "|");
+		stats.add("SL" + "|" + 5 + "|" + smallCounter5 + "|" + "|" + "|");
+	}
+
+	public void writeToStatisticsMultiLotto(int[] multiLottoResult) throws FileNotFoundException, IOException {
+		CSVParser parser = new CSVParser(new FileReader(couponDatabase.toString()), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
+		int multiCounter10 = 0;
+		int multiCounter = 0;
+		for (CSVRecord record : parser) {
+			int numberOfCommonElements;
+			String str = record.get("Numbers");
+			int[] arr = Arrays.stream(str.substring(1, str.length() - 1).split(",")).map(String::trim)
+					.mapToInt(Integer::parseInt).toArray();
+			if (record.get("Game name").equals(Game.MULTI.gameName())) {
 				multiCounter++;
 				List<Integer> commonPart = findCommon(arr, multiLottoResult);
 				numberOfCommonElements = commonPart.size();
@@ -136,21 +159,17 @@ public class StatisticsDaoImpl {
 			}
 		}
 		parser.close();
-		stats.add("BL" + "Total" + "|" + bigCounter + "|" + "|" + "|");
-		stats.add("SL" + "Total" + "|" + smallCounter + "|" + "|" + "|");
 		stats.add("ML" + "Total" + "|" + multiCounter + "|" + "|" + "|");
-		stats.add("BL" + "|" + 3 + "|" + bigCounter3 + "|" + "|" + "|");
-		stats.add("BL" + "|" + 4 + "|" + bigCounter4 + "|" + "|" + "|");
-		stats.add("BL" + "|" + 5 + "|" + bigCounter5 + "|" + "|" + "|");
-		stats.add("BL" + "|" + 6 + "|" + bigCounter6 + "|" + "|" + "|");
-		stats.add("SL" + "|" + 5 + "|" + smallCounter5 + "|" + "|" + "|");
 		stats.add("ML" + "|" + 10 + "|" + multiCounter10 + "|" + "|" + "|");
-		addStatistics(stats);
+	}
+
+	List<String> getStats() {
+		return stats;
 	}
 
 	public void addStatistics(List<String> stats) throws IOException {
 		try {
-			FileWriter writer = new FileWriter(fileStatistics, true);
+			FileWriter writer = new FileWriter(statisticDatabase.toString(), true);
 			BufferedWriter bufferedWriter = new BufferedWriter(writer);
 			System.out.print("Writing buffered (buffer size: " + ")... ");
 			write(stats, bufferedWriter);

@@ -1,6 +1,5 @@
 package lotto;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.stream.IntStream;
 
 public class Client {
 	private List<Coupon> coupons = new ArrayList<Coupon>();
-	private LocalDateTime clientId = LocalDateTime.now();
+	private int clientId;
 
-	public Client() {
-
+	public Client(int clientId) {
+		this.clientId = clientId;
 	}
 
 	public Coupon buy(Coupon coupon, int maxNumberOfBets) {
@@ -54,7 +53,7 @@ public class Client {
 		}
 	}
 
-	public LocalDateTime getClientId() {
+	public int getClientId() {
 		return clientId;
 	}
 }

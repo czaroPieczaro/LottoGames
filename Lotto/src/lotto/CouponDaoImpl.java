@@ -1,7 +1,6 @@
 package lotto;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -20,8 +19,7 @@ import org.apache.commons.csv.CSVRecord;
 
 public class CouponDaoImpl implements CouponDao {
 
-	private final String databasePath = "C:/Output/databaseVariant1.csv";
-	private File database = new File("C:/Output/databaseVariant1.csv");
+	Path couponDatabase = Paths.get("C:/Output/databaseVariant1.csv");
 	private static CouponDaoImpl couponDaoImpl = new CouponDaoImpl();
 
 	private CouponDaoImpl() {
@@ -33,10 +31,9 @@ public class CouponDaoImpl implements CouponDao {
 
 	@Override
 	public void clearDatabase() {
-		Path file = Paths.get(databasePath);
 		List<String> lines = Arrays.asList("Bet number, Game name, Numbers, Coupon id, Client id");
 		try {
-			Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
+			Files.write(couponDatabase, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,14 +41,11 @@ public class CouponDaoImpl implements CouponDao {
 	}
 
 	@Override
-	public void addCouponsToDatabase(List<String> bets) throws IOException {
-		try {
-			FileWriter writer = new FileWriter(database, true);
+	public void addCouponsToDatabase(List<String> bets) throws IOException {		
+			FileWriter writer = new FileWriter(couponDatabase.toString(), true);
 			BufferedWriter bufferedWriter = new BufferedWriter(writer);
 			System.out.print("Writing buffered (buffer size: " + ")... ");
-			write(bets, bufferedWriter);
-		} finally {
-		}
+			write(bets, bufferedWriter);		
 	}
 
 	private void write(List<String> records, Writer writer) throws IOException {
@@ -67,7 +61,7 @@ public class CouponDaoImpl implements CouponDao {
 
 	@Override
 	public void printCoupons() throws FileNotFoundException, IOException {
-		CSVParser parser = new CSVParser(new FileReader(databasePath), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
+		CSVParser parser = new CSVParser(new FileReader(couponDatabase.toString()), CSVFormat.DEFAULT.withSkipHeaderRecord(true)
 				.withHeader("Bet number", "Game name", "Numbers", "Coupon id", "Client id").withDelimiter('|'));
 		for (CSVRecord record : parser) {
 			System.out.println(record.get("Bet number") + " " + record.get("Game name") + " " + record.get("Numbers")

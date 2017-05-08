@@ -30,6 +30,9 @@ public class SuperRandomizingMachine {
 		Result resultInfo = new Result(gameName, results);
 		return resultInfo;
 	}
+	public void test(){
+		System.out.println("Super");
+	}
 
 	public SuperRandomizingMachine() {
 
